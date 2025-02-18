@@ -10,6 +10,7 @@ import (
 	_ "github.com/lib/pq"
 )
 
+// postgres server settings
 const (
 	host     = "localhost"
 	port     = 5432
@@ -73,6 +74,7 @@ func createTable(db *sql.DB) {
 	}
 }
 
+// take a struct and db adn return the task key
 func insertTask(db *sql.DB, task Task) int {
 	query := `INSERT INTO tasks (task, body, done)
     VALUES ($1, $2, $3) RETURNING id`
@@ -98,6 +100,8 @@ func menu() string {
 	return scanner.Text()
 }
 
+// adds data to db
+// the scanner.Scan() seems wrong to call everytime, but I have not found a better way
 func addData(db *sql.DB) {
 	fmt.Println("Adding task")
 	var new_task Task
@@ -112,7 +116,7 @@ func addData(db *sql.DB) {
 	fmt.Print("Task Description: ")
 	scanner.Scan()
 	new_task.body = scanner.Text()
-
+	// store task key
 	tk := insertTask(db, new_task)
 
 	fmt.Printf("New Task ID: %d\n", tk)
